@@ -133,6 +133,63 @@
     .end-slide .big { font-size: 3em; margin-bottom: 0.2em; }
     .end-slide .tagline { font-size: 0.65em; color: #aaa; margin-top: 1em; }
 
+    /* === 翻頁效果選單 === */
+    #transition-container {
+      position: fixed;
+      top: 15px;
+      right: 15px;
+      z-index: 9999;
+      font-family: 'Microsoft JhengHei', 'Segoe UI', sans-serif;
+      width: 220px;
+    }
+    #transition-header {
+      background: #1e88e5;
+      color: white;
+      padding: 10px 15px;
+      font-size: 14px;
+      font-weight: 700;
+      border-radius: 4px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      user-select: none;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    #transition-header:hover {
+      background: #1565c0;
+    }
+    #transition-list {
+      display: none;
+      background: #f0f0f0;
+      border-radius: 4px;
+      margin-top: 5px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.4);
+      border: 1px solid #ddd;
+      overflow: hidden;
+    }
+    .transition-item {
+      padding: 10px 15px;
+      font-size: 13px;
+      color: #333;
+      cursor: pointer;
+      border-bottom: 1px solid #e0e0e0;
+      background: #f5f5f5;
+      text-align: left;
+      user-select: none;
+    }
+    .transition-item:last-child {
+      border-bottom: none;
+    }
+    .transition-item:hover {
+      background: #e0e0e0;
+    }
+    .transition-item.active {
+      background: #1e88e5;
+      color: white;
+    }
+
     @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
   </style>
 </head>
@@ -328,7 +385,7 @@
       
       <div style="position:relative; height:340px; border-radius:12px; overflow:hidden; border:1px solid rgba(255,255,255,0.1);">
         <!-- Left side (Before / Blind) -->
-        <div id="viz-before" style="position:absolute; inset:0; background:rgba(232,100,58,0.08); padding:30px 40px; text-align:left; box-sizing:border-box;">
+        <div id="viz-before" style="position:absolute; inset:0; background:rgba(232,100,58,0.08); padding:30px 40px; text-align:left; box-sizing:border-box; transition: opacity 0.2s ease-in-out; opacity: 1;">
           <div style="font-size:0.8em; color:var(--accent); font-weight:700; margin-bottom:15px; border-bottom:2px solid var(--accent); padding-bottom:8px;">
             ⚠️ 盲目依賴 (Blind Reliance)
           </div>
@@ -340,7 +397,7 @@
         </div>
         
         <!-- Right side (After / Strategic) -->
-        <div id="viz-after" style="position:absolute; inset:0; background:rgba(79,195,247,0.12); padding:30px 40px; text-align:left; box-sizing:border-box; clip-path:inset(0 100% 0 0); transition: clip-path 0.1s ease-out;">
+        <div id="viz-after" style="position:absolute; inset:0; background:rgba(79,195,247,0.12); padding:30px 40px; text-align:left; box-sizing:border-box; transition: opacity 0.2s ease-in-out; opacity: 0;">
           <div style="font-size:0.8em; color:var(--accent2); font-weight:700; margin-bottom:15px; border-bottom:2px solid var(--accent2); padding-bottom:8px;">
             🌟 策略性管理 (Strategic Management)
           </div>
@@ -362,10 +419,10 @@
         <input id="viz-slider" type="range" min="0" max="100" value="0" style="width:70%; cursor:pointer;">
         <span style="font-size:0.4em; color:var(--accent2); font-weight:700;">策略管理</span>
       </div>
-      <p style="font-size: 0.35em; color: #888; margin-top: 10px;">拖曳滑桿來對比兩種心態的轉變 👆</p>
+      <p style="font-size: 0.35em; color: #888; margin-top: 10px;">拖曳滑桿來切換不同心態的對比 👆</p>
     </section>
 
-    <!-- Slide 8: 向度四：設計 -->
+    <!-- Slide 8: 向度四 -->
     <section>
       <h2>向度四：設計 (Designing AI)</h2>
       <p style="font-size: 0.45em; color: #ccc; margin-bottom: 20px;">「我有能力形塑 AI 以符合人類價值嗎？」 —— 倫理設計與公民意識</p>
@@ -430,7 +487,7 @@
         </div>
         <div class="conclusion-card caution fragment" style="padding: 12px 18px;">
           <div class="cc-title" style="font-size: 1.1em; margin-bottom: 5px;">🎯 後設認知陷阱 (Metacognitive Trap)</div>
-          <p style="font-size: 0.85em; color: #bbb; margin: 0;">一種「以為自己已經學會了」的錯覺。實際上您只是掌握了召喚答案的按鈕，而非知識本身。</p>
+          <p style="font-size: 0.85em; color: #bbb; margin: 0;">一種「以為自己已經學會了」的錯錯覺。實際上您只是掌握了召喚答案的按鈕，而非知識本身。</p>
         </div>
       </div>
     </section>
@@ -470,9 +527,29 @@
   </div>
 </div>
 
+<!-- 翻頁效果選單 -->
+<div id="transition-container">
+  <div id="transition-header">
+    <span id="transition-current">3D 凸面翻頁 (Convex)</span>
+    <span style="font-size:10px;">▼</span>
+  </div>
+  <div id="transition-list">
+    <div class="transition-item" data-val="zoom">縮放翻飛 (Zoom)</div>
+    <div class="transition-item" data-val="slide">橫向滑動 (Slide)</div>
+    <div class="transition-item" data-val="fade">柔光淡入 (Fade)</div>
+    <div class="transition-item active" data-val="convex">3D 凸面翻頁 (Convex)</div>
+    <div class="transition-item" data-val="concave">3D 凹面翻頁 (Concave)</div>
+    <div class="transition-item" data-val="zoom">閃光推近 (Flash Zoom)</div>
+    <div class="transition-item" data-val="slide">傾斜浮升 (Tilt Rise)</div>
+    <div class="transition-item" data-val="convex">景深掃入 (Depth Sweep)</div>
+    <div class="transition-item" data-val="slide">玻璃擦拭 (Glass Wipe)</div>
+    <div class="transition-item" data-val="zoom">電影彈出 (Cinema Pop)</div>
+  </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
 <script>
-  // 初始化 Reveal.js，配置酷炫翻頁效果：convex 3D 旋轉效果 + zoom 背景縮放
+  // 初始化 Reveal.js，預設配置：convex 3D 旋轉效果 + zoom 背景縮放
   Reveal.initialize({
     hash: true,
     transition: 'convex',
@@ -485,11 +562,50 @@
     plugins: []
   });
 
-  // VIZ 滑桿對比控制邏輯
+  // VIZ 滑桿對比控制邏輯 (Opacity 雙層乾淨切換，解決文字重疊)
   document.getElementById('viz-slider').addEventListener('input', function() {
     const v = +this.value;
-    document.getElementById('viz-after').style.clipPath = `inset(0 ${100-v}% 0 0)`;
     document.getElementById('viz-divider').style.left = v + '%';
+    if (v < 50) {
+      document.getElementById('viz-before').style.opacity = '1';
+      document.getElementById('viz-after').style.opacity = '0';
+    } else {
+      document.getElementById('viz-before').style.opacity = '0';
+      document.getElementById('viz-after').style.opacity = '1';
+    }
+  });
+
+  // 翻頁效果選單控制邏輯
+  const transHeader = document.getElementById('transition-header');
+  const transList = document.getElementById('transition-list');
+  const transCurrent = document.getElementById('transition-current');
+  const transItems = document.querySelectorAll('.transition-item');
+
+  transHeader.addEventListener('click', (e) => {
+    e.stopPropagation();
+    transList.style.display = transList.style.display === 'block' ? 'none' : 'block';
+  });
+
+  document.addEventListener('click', () => {
+    transList.style.display = 'none';
+  });
+
+  transItems.forEach(item => {
+    item.addEventListener('click', function(e) {
+      e.stopPropagation();
+      const val = this.getAttribute('data-val');
+      const text = this.textContent;
+      
+      // 更新標題與選單狀態
+      transCurrent.textContent = text;
+      transItems.forEach(i => i.classList.remove('active'));
+      this.classList.add('active');
+      
+      // 切換 Reveal.js 翻頁效果
+      Reveal.configure({ transition: val });
+      
+      transList.style.display = 'none';
+    });
   });
 </script>
 
@@ -498,7 +614,7 @@
   import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js';
   import {
     getFirestore, collection, addDoc, onSnapshot,
-    serverTimestamp, query, orderBy, doc, setDoc
+    serverTimestamp, query, doc, setDoc
   } from 'https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js';
 
   // 使用共用示範專案的 Firebase 配置
@@ -514,7 +630,7 @@
   const app = initializeApp(firebaseConfig);
   const fdb = getFirestore(app);
 
-  // === 1. 即時文字雲模組 ===
+  // === 1. 即時文字雲模組 (優化本地反應與 canvas 寬度適應) ===
   const wordsRef = collection(fdb, 'oecd_ai_literacy_wordcloud');
   const COLORS = ['#4fc3f7','#e8643a','#ffb74d','#81c784','#ce93d8','#80deea','#f48fb1'];
   let wcData = [];
@@ -540,9 +656,15 @@
   });
   document.getElementById('wc-btn')?.addEventListener('click', window.wcSubmit);
 
-  onSnapshot(query(wordsRef, orderBy('created_at', 'asc')), snap => {
+  // 移除了伺服器端排序，直接監聽以獲取即時本地更新(不需等待時間戳寫入)
+  onSnapshot(wordsRef, snap => {
     const words = [];
-    snap.forEach(doc => words.push(doc.data().word));
+    snap.forEach(doc => {
+      const data = doc.data();
+      if (data && data.word) {
+        words.push(data.word);
+      }
+    });
     const counts = {};
     words.forEach(w => counts[w] = (counts[w] || 0) + 1);
     wcData = Object.entries(counts).sort((a, b) => b[1] - a[1]);
@@ -566,14 +688,19 @@
   function drawWordCloud() {
     const canvas = document.getElementById('wc-canvas');
     if (!canvas || typeof WordCloud === 'undefined') return;
-    const rect = canvas.getBoundingClientRect();
-    if (rect.width < 10 || rect.height < 10) return;
-    canvas.width = rect.width;
-    canvas.height = rect.height;
+    
+    // 依據父容器寬高重設 canvas 物理寬高，確保在 Reveal.js 縮放環境中精確顯示
+    const parent = canvas.parentElement;
+    const w = parent.offsetWidth || 600;
+    const h = parent.offsetHeight || 400;
+    canvas.width = w;
+    canvas.height = h;
+
     if (wcData.length === 0) return;
     const maxCount = wcData[0][1];
+    
     WordCloud(canvas, {
-      list: wcData.map(([w, c]) => [w, Math.max(16, Math.round((c / maxCount) * 64))]),
+      list: wcData.map(([w, c]) => [w, Math.max(14, Math.round((c / maxCount) * 48))]),
       gridSize: 8,
       weightFactor: 1,
       fontFamily: '"Microsoft JhengHei", "Noto Sans TC", sans-serif',
@@ -620,7 +747,6 @@
 
   async function vote(optId) {
     myVote = optId;
-    // 禁用所有按鈕樣式但保留可切換
     OPTIONS.forEach(opt => {
       const check = document.getElementById(`poll-check-${opt.id}`);
       if (opt.id === optId) {
