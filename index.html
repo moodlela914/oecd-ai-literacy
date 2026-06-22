@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reset.css" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/theme/night.css" />
-  <script src="https://cdn.jsdelivr.net/npm/wordcloud@1.2.2/src/wordcloud2.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/wordcloud2.js/1.2.2/wordcloud2.min.js"></script>
   <style>
     /* === 全域變數與主題 === */
     :root {
@@ -135,59 +135,59 @@
 
     /* === 翻頁效果選單 === */
     #transition-container {
-      position: fixed;
-      top: 15px;
-      right: 15px;
-      z-index: 9999;
-      font-family: 'Microsoft JhengHei', 'Segoe UI', sans-serif;
-      width: 220px;
+      position: fixed !important;
+      top: 15px !important;
+      right: 15px !important;
+      z-index: 99999 !important;
+      font-family: 'Microsoft JhengHei', 'Segoe UI', sans-serif !important;
+      width: 220px !important;
     }
     #transition-header {
-      background: #1e88e5;
-      color: white;
-      padding: 10px 15px;
-      font-size: 14px;
-      font-weight: 700;
-      border-radius: 4px;
-      cursor: pointer;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-      user-select: none;
-      border: 1px solid rgba(255,255,255,0.1);
+      background: #1e88e5 !important;
+      color: white !important;
+      padding: 10px 15px !important;
+      font-size: 14px !important;
+      font-weight: 700 !important;
+      border-radius: 4px !important;
+      cursor: pointer !important;
+      display: flex !important;
+      justify-content: space-between !important;
+      align-items: center !important;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3) !important;
+      user-select: none !important;
+      border: 1px solid rgba(255,255,255,0.1) !important;
     }
     #transition-header:hover {
-      background: #1565c0;
+      background: #1565c0 !important;
     }
     #transition-list {
       display: none;
-      background: #f0f0f0;
-      border-radius: 4px;
-      margin-top: 5px;
-      box-shadow: 0 6px 18px rgba(0,0,0,0.4);
-      border: 1px solid #ddd;
-      overflow: hidden;
+      background: #f0f0f0 !important;
+      border-radius: 4px !important;
+      margin-top: 5px !important;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.4) !important;
+      border: 1px solid #ddd !important;
+      overflow: hidden !important;
     }
     .transition-item {
-      padding: 10px 15px;
-      font-size: 13px;
-      color: #333;
-      cursor: pointer;
-      border-bottom: 1px solid #e0e0e0;
-      background: #f5f5f5;
-      text-align: left;
-      user-select: none;
+      padding: 10px 15px !important;
+      font-size: 13px !important;
+      color: #333 !important;
+      cursor: pointer !important;
+      border-bottom: 1px solid #e0e0e0 !important;
+      background: #f5f5f5 !important;
+      text-align: left !important;
+      user-select: none !important;
     }
     .transition-item:last-child {
-      border-bottom: none;
+      border-bottom: none !important;
     }
     .transition-item:hover {
-      background: #e0e0e0;
+      background: #e0e0e0 !important;
     }
     .transition-item.active {
-      background: #1e88e5;
-      color: white;
+      background: #1e88e5 !important;
+      color: white !important;
     }
 
     @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
@@ -349,7 +349,7 @@
         </div>
       </div>
       <p style="font-size: 0.4em; color: var(--accent); margin-top: 20px;" class="fragment">
-        📘 <b>學習重點：</b> 如果我們看不見 AI 的隱形影響，我們就無法對其產生真正的影響力。
+        📘 <b>學習重點：</b> 如果我們看不見 AI 的隱形影響，我們就無法對其真正產生影響力。
       </p>
     </section>
 
@@ -487,7 +487,7 @@
         </div>
         <div class="conclusion-card caution fragment" style="padding: 12px 18px;">
           <div class="cc-title" style="font-size: 1.1em; margin-bottom: 5px;">🎯 後設認知陷阱 (Metacognitive Trap)</div>
-          <p style="font-size: 0.85em; color: #bbb; margin: 0;">一種「以為自己已經學會了」的錯錯覺。實際上您只是掌握了召喚答案的按鈕，而非知識本身。</p>
+          <p style="font-size: 0.85em; color: #bbb; margin: 0;">一種「以為自己已經學會了」的錯覺。實際上您只是掌握了召喚答案的按鈕，而非知識本身。</p>
         </div>
       </div>
     </section>
@@ -609,7 +609,7 @@
   });
 </script>
 
-<!-- Firebase 互動元件即時同步模組 -->
+<!-- Firebase 互動元件即時同步與 LocalStorage 本地雙軌備援模組 -->
 <script type="module">
   import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js';
   import {
@@ -630,46 +630,37 @@
   const app = initializeApp(firebaseConfig);
   const fdb = getFirestore(app);
 
-  // === 1. 即時文字雲模組 (優化本地反應與 canvas 寬度適應) ===
+  // === 1. 即時文字雲模組 (支援 Firestore 權限過期時自動切換至 LocalStorage 備援) ===
   const wordsRef = collection(fdb, 'oecd_ai_literacy_wordcloud');
   const COLORS = ['#4fc3f7','#e8643a','#ffb74d','#81c784','#ce93d8','#80deea','#f48fb1'];
   let wcData = [];
+  let isWcLocalMode = false;
+  let localWords = [];
 
-  window.wcSubmit = async function() {
-    const input = document.getElementById('wc-input');
-    const word = input.value.trim();
-    if (!word) return;
-    const btn = document.getElementById('wc-btn');
-    btn.disabled = true;
+  // 從 LocalStorage 載入文字雲歷史紀錄
+  function loadLocalWords() {
     try {
-      await addDoc(wordsRef, { word, created_at: serverTimestamp() });
-      input.value = '';
+      const data = localStorage.getItem('oecd_ai_local_words');
+      localWords = data ? JSON.parse(data) : [];
     } catch(e) {
-      console.error(e);
-    } finally {
-      btn.disabled = false;
+      localWords = [];
     }
-  };
+  }
 
-  document.getElementById('wc-input')?.addEventListener('keypress', e => {
-    if (e.key === 'Enter') window.wcSubmit();
-  });
-  document.getElementById('wc-btn')?.addEventListener('click', window.wcSubmit);
+  // 儲存文字雲紀錄至 LocalStorage
+  function saveLocalWords() {
+    try {
+      localStorage.setItem('oecd_ai_local_words', JSON.stringify(localWords));
+    } catch(e) {}
+  }
 
-  // 移除了伺服器端排序，直接監聽以獲取即時本地更新(不需等待時間戳寫入)
-  onSnapshot(wordsRef, snap => {
-    const words = [];
-    snap.forEach(doc => {
-      const data = doc.data();
-      if (data && data.word) {
-        words.push(data.word);
-      }
-    });
+  // 處理並渲染文字雲與排行清單
+  function renderWordCloudData(wordsList) {
     const counts = {};
-    words.forEach(w => counts[w] = (counts[w] || 0) + 1);
+    wordsList.forEach(w => counts[w] = (counts[w] || 0) + 1);
     wcData = Object.entries(counts).sort((a, b) => b[1] - a[1]);
 
-    document.getElementById('wc-total').textContent = words.length;
+    document.getElementById('wc-total').textContent = wordsList.length;
     document.getElementById('wc-unique').textContent = wcData.length;
 
     const listEl = document.getElementById('wc-list');
@@ -683,7 +674,63 @@
     const empty = document.getElementById('wc-empty');
     if (empty) empty.style.display = wcData.length > 0 ? 'none' : '';
     drawWordCloud();
+  }
+
+  window.wcSubmit = async function() {
+    const input = document.getElementById('wc-input');
+    const word = input.value.trim();
+    if (!word) return;
+
+    if (isWcLocalMode) {
+      localWords.push(word);
+      saveLocalWords();
+      renderWordCloudData(localWords);
+      input.value = '';
+      return;
+    }
+
+    const btn = document.getElementById('wc-btn');
+    btn.disabled = true;
+    try {
+      await addDoc(wordsRef, { word, created_at: serverTimestamp() });
+      input.value = '';
+    } catch(e) {
+      console.warn("Firestore 寫入失敗，切換至 LocalStorage 備援模式:", e);
+      isWcLocalMode = true;
+      loadLocalWords();
+      localWords.push(word);
+      saveLocalWords();
+      renderWordCloudData(localWords);
+      input.value = '';
+    } finally {
+      btn.disabled = false;
+    }
+  };
+
+  document.getElementById('wc-input')?.addEventListener('keypress', e => {
+    if (e.key === 'Enter') window.wcSubmit();
   });
+  document.getElementById('wc-btn')?.addEventListener('click', window.wcSubmit);
+
+  // 訂閱 Firestore 連線，若失敗 (如 403 權限過期) 則無縫啟用 LocalStorage 本地資料軌
+  const unsubscribeWc = onSnapshot(wordsRef, 
+    snap => {
+      const words = [];
+      snap.forEach(doc => {
+        const data = doc.data();
+        if (data && data.word) {
+          words.push(data.word);
+        }
+      });
+      renderWordCloudData(words);
+    },
+    error => {
+      console.warn("Firestore 連線失敗 (可能規則過期)，已啟用本地 LocalStorage 備援運作:", error);
+      isWcLocalMode = true;
+      loadLocalWords();
+      renderWordCloudData(localWords);
+    }
+  );
 
   function drawWordCloud() {
     const canvas = document.getElementById('wc-canvas');
@@ -711,7 +758,7 @@
     });
   }
 
-  // === 2. 即時單選投票模組 ===
+  // === 2. 即時單選投票模組 (支援 Firestore 權限過期時自動切換至 LocalStorage 備援) ===
   const OPTIONS = [
     { id: 'a', label: 'A. 直接索取標準答案 (認知卸載風險高)' },
     { id: 'b', label: 'B. 扮演導師逐步引導 (長期學習效果佳)' }
@@ -719,6 +766,39 @@
   const pollRef = doc(fdb, 'oecd_ai_literacy_poll', 'results');
   const userId = 'user_' + Math.random().toString(36).slice(2, 9);
   let myVote = null;
+  let isPollLocalMode = false;
+  let localPollVotes = {}; // 格式: { userId: optId }
+
+  function loadLocalPoll() {
+    try {
+      const data = localStorage.getItem('oecd_ai_local_poll');
+      localPollVotes = data ? JSON.parse(data) : {};
+    } catch(e) {
+      localPollVotes = {};
+    }
+  }
+
+  function saveLocalPoll() {
+    try {
+      localStorage.setItem('oecd_ai_local_poll', JSON.stringify(localPollVotes));
+    } catch(e) {}
+  }
+
+  function renderPollData(votes) {
+    const counts = {};
+    OPTIONS.forEach(o => counts[o.id] = 0);
+    Object.values(votes).forEach(v => {
+      if (counts[v] !== undefined) counts[v]++;
+    });
+    const total = Object.values(counts).reduce((a, b) => a + b, 0);
+
+    document.getElementById('poll-total').textContent = total;
+    OPTIONS.forEach(opt => {
+      const pct = total > 0 ? Math.round((counts[opt.id] / total) * 100) : 0;
+      document.getElementById(`poll-bar-${opt.id}`).style.width = pct + '%';
+      document.getElementById(`poll-pct-${opt.id}`).textContent = pct + '%';
+    });
+  }
 
   // 渲染投票選項
   const container = document.getElementById('poll-options');
@@ -760,29 +840,53 @@
       }
     });
 
+    if (isPollLocalMode) {
+      localPollVotes[userId] = optId;
+      saveLocalPoll();
+      renderPollData(localPollVotes);
+      return;
+    }
+
     const data = {};
     data[`votes.${userId}`] = optId;
     data.updated_at = serverTimestamp();
-    await setDoc(pollRef, data, { merge: true });
+    try {
+      await setDoc(pollRef, data, { merge: true });
+    } catch(e) {
+      console.warn("Firestore 投票失敗，已切換至 LocalStorage 本地儲存模式:", e);
+      isPollLocalMode = true;
+      loadLocalPoll();
+      localPollVotes[userId] = optId;
+      saveLocalPoll();
+      renderPollData(localPollVotes);
+    }
   }
 
-  onSnapshot(pollRef, snap => {
-    const data = snap.data() || {};
-    const votes = data.votes || {};
-    const counts = {};
-    OPTIONS.forEach(o => counts[o.id] = 0);
-    Object.values(votes).forEach(v => {
-      if (counts[v] !== undefined) counts[v]++;
-    });
-    const total = Object.values(counts).reduce((a, b) => a + b, 0);
-
-    document.getElementById('poll-total').textContent = total;
-    OPTIONS.forEach(opt => {
-      const pct = total > 0 ? Math.round((counts[opt.id] / total) * 100) : 0;
-      document.getElementById(`poll-bar-${opt.id}`).style.width = pct + '%';
-      document.getElementById(`poll-pct-${opt.id}`).textContent = pct + '%';
-    });
-  });
+  // 訂閱投票結果連線，若 403 則啟用 LocalStorage 統計渲染
+  const unsubscribePoll = onSnapshot(pollRef, 
+    snap => {
+      const data = snap.data() || {};
+      const votes = data.votes || {};
+      renderPollData(votes);
+    },
+    error => {
+      console.warn("Firestore 投票讀取失敗，已切換至 LocalStorage 本地統計備援:", error);
+      isPollLocalMode = true;
+      loadLocalPoll();
+      renderPollData(localPollVotes);
+      
+      // 若本地已投過，恢復 checkmark
+      if (localPollVotes[userId]) {
+        myVote = localPollVotes[userId];
+        const check = document.getElementById(`poll-check-${myVote}`);
+        if (check) {
+          check.textContent = '✓';
+          check.style.background = 'var(--accent2)';
+          check.style.borderColor = 'var(--accent2)';
+        }
+      }
+    }
+  );
 
   // Slide 切換事件監聽，確保進入時正確重繪
   Reveal.on('slidechanged', e => {
