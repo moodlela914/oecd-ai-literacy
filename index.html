@@ -516,7 +516,7 @@
                style="width:160px;height:160px;object-fit:contain;
                       filter:drop-shadow(0 0 24px rgba(79,195,247,0.7));">
         </div>
-        <h1 style="color:var(--accent2); margin-top: 0.3em;">以人為核心的 AI 素養</h1>
+        <h1 style="color:var(--accent2); margin-top: 0.3em;">以人為核心認證 AI 素養</h1>
         <p class="tagline" style="font-size: 0.55em; color: #ddd; font-style: italic;">
           「我們學習 AI 素養，不是為了變成機器，而是為了更有效率地發揮人類特有的創造力、批判力與領導力。」
         </p>
@@ -614,7 +614,7 @@
   import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js';
   import {
     getFirestore, collection, addDoc, onSnapshot,
-    serverTimestamp, query, doc, setDoc
+    serverTimestamp, doc, setDoc
   } from 'https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js';
 
   // 使用共用示範專案的 Firebase 配置
@@ -630,14 +630,19 @@
   const app = initializeApp(firebaseConfig);
   const fdb = getFirestore(app);
 
-  // === 1. 即時文字雲模組 (支援 Firestore 權限過期時自動切換至 LocalStorage 備援) ===
+  // === 1. 即時文字雲模組 (支援 LocalStorage 備援與學生投票模擬) ===
   const wordsRef = collection(fdb, 'oecd_ai_literacy_wordcloud');
   const COLORS = ['#4fc3f7','#e8643a','#ffb74d','#81c784','#ce93d8','#80deea','#f48fb1'];
   let wcData = [];
   let isWcLocalMode = false;
   let localWords = [];
 
-  // 從 LocalStorage 載入文字雲歷史紀錄
+  const MOCK_WORDS = [
+    'AI', '素養', '學習', '主體性', '技術', '未來', '倫理', '批判性', '創造力', '人機協作',
+    'AI', '素養', '學習', 'AI', '未來', '主體性', '技術', '倫理', 'AI', '素養', '批判性',
+    '創造力', '人機協作', '設計', '管理', '引導', '未來', '學習', '主體性', '技術'
+  ];
+
   function loadLocalWords() {
     try {
       const data = localStorage.getItem('oecd_ai_local_words');
@@ -645,16 +650,18 @@
     } catch(e) {
       localWords = [];
     }
+    if (localWords.length === 0) {
+      localWords = [...MOCK_WORDS];
+      saveLocalWords();
+    }
   }
 
-  // 儲存文字雲紀錄至 LocalStorage
   function saveLocalWords() {
     try {
       localStorage.setItem('oecd_ai_local_words', JSON.stringify(localWords));
     } catch(e) {}
   }
 
-  // 處理並渲染文字雲與排行清單
   function renderWordCloudData(wordsList) {
     const counts = {};
     wordsList.forEach(w => counts[w] = (counts[w] || 0) + 1);
@@ -712,7 +719,6 @@
   });
   document.getElementById('wc-btn')?.addEventListener('click', window.wcSubmit);
 
-  // 訂閱 Firestore 連線，若失敗 (如 403 權限過期) 則無縫啟用 LocalStorage 本地資料軌
   const unsubscribeWc = onSnapshot(wordsRef, 
     snap => {
       const words = [];
@@ -729,6 +735,11 @@
       isWcLocalMode = true;
       loadLocalWords();
       renderWordCloudData(localWords);
+
+      // 檢查目前是否已在文字雲頁面，若是則立刻啟動模擬
+      if (Reveal.getCurrentSlide()?.id === 'slide-wordcloud') {
+        startWcSimulation();
+      }
     }
   );
 
@@ -736,7 +747,6 @@
     const canvas = document.getElementById('wc-canvas');
     if (!canvas || typeof WordCloud === 'undefined') return;
     
-    // 依據父容器寬高重設 canvas 物理寬高，確保在 Reveal.js 縮放環境中精確顯示
     const parent = canvas.parentElement;
     const w = parent.offsetWidth || 600;
     const h = parent.offsetHeight || 400;
@@ -758,7 +768,7 @@
     });
   }
 
-  // === 2. 即時單選投票模組 (支援 Firestore 權限過期時自動切換至 LocalStorage 備援) ===
+  // === 2. 即時單選投票模組 (支援 LocalStorage 備援、累加票數顯示與自動模擬投票) ===
   const OPTIONS = [
     { id: 'a', label: 'A. 直接索取標準答案 (認知卸載風險高)' },
     { id: 'b', label: 'B. 扮演導師逐步引導 (長期學習效果佳)' }
@@ -769,6 +779,22 @@
   let isPollLocalMode = false;
   let localPollVotes = {}; // 格式: { userId: optId }
 
+  function initMockPollData() {
+    // 預先產生基準票數 (Option A: 25 票, Option B: 17 票)，避免覆蓋已存在的同名 key
+    for (let i = 1; i <= 25; i++) {
+      const k = `mock_a_${i}`;
+      if (!localPollVotes[k]) {
+        localPollVotes[k] = 'a';
+      }
+    }
+    for (let i = 1; i <= 17; i++) {
+      const k = `mock_b_${i}`;
+      if (!localPollVotes[k]) {
+        localPollVotes[k] = 'b';
+      }
+    }
+  }
+
   function loadLocalPoll() {
     try {
       const data = localStorage.getItem('oecd_ai_local_poll');
@@ -776,6 +802,9 @@
     } catch(e) {
       localPollVotes = {};
     }
+    // 每次載入時都確保 mock 資料被正確填入 (相容之前已存在 LocalStorage 但無 mock 資料的舊版情況)
+    initMockPollData();
+    saveLocalPoll();
   }
 
   function saveLocalPoll() {
@@ -796,7 +825,7 @@
     OPTIONS.forEach(opt => {
       const pct = total > 0 ? Math.round((counts[opt.id] / total) * 100) : 0;
       document.getElementById(`poll-bar-${opt.id}`).style.width = pct + '%';
-      document.getElementById(`poll-pct-${opt.id}`).textContent = pct + '%';
+      document.getElementById(`poll-pct-${opt.id}`).textContent = `${pct}% (${counts[opt.id]}票)`;
     });
   }
 
@@ -815,7 +844,7 @@
               style="flex:0 0 120px;height:8px;background:rgba(255,255,255,0.1);border-radius:4px;overflow:hidden;">
           <div id="poll-bar-${opt.id}" style="height:100%;width:0;background:var(--accent2);border-radius:4px;transition:width 0.4s;"></div>
         </span>
-        <span id="poll-pct-${opt.id}" style="flex:0 0 36px;text-align:right;font-size:0.75em;color:#888;">0%</span>
+        <span id="poll-pct-${opt.id}" style="flex:0 0 80px;text-align:right;font-size:0.75em;color:#888;">0%</span>
       </div>
     `;
     btn.style.cssText = `width:100%;padding:12px 16px;background:rgba(255,255,255,0.06);
@@ -847,9 +876,12 @@
       return;
     }
 
-    const data = {};
-    data[`votes.${userId}`] = optId;
-    data.updated_at = serverTimestamp();
+    const data = {
+      votes: {
+        [userId]: optId
+      },
+      updated_at: serverTimestamp()
+    };
     try {
       await setDoc(pollRef, data, { merge: true });
     } catch(e) {
@@ -866,7 +898,16 @@
   const unsubscribePoll = onSnapshot(pollRef, 
     snap => {
       const data = snap.data() || {};
-      const votes = data.votes || {};
+      let votes = data.votes || {};
+      
+      // 提取點記法的扁平欄位 (例如 "votes.user_xxx")，確保相容先前寫入的資料
+      Object.keys(data).forEach(key => {
+        if (key.startsWith('votes.')) {
+          const uId = key.substring(6);
+          votes[uId] = data[key];
+        }
+      });
+      
       renderPollData(votes);
     },
     error => {
@@ -885,13 +926,63 @@
           check.style.borderColor = 'var(--accent2)';
         }
       }
+
+      // 檢查目前是否已在投票頁面，若是則立刻啟動模擬
+      if (Reveal.getCurrentSlide()?.id === 'slide-poll') {
+        startPollSimulation();
+      }
     }
   );
 
-  // Slide 切換事件監聽，確保進入時正確重繪
+  // === 3. 模擬現場其他學生投票與提交詞彙 (增加互動臨場感) ===
+  let pollSimulationInterval = null;
+  let wcSimulationInterval = null;
+  const SIM_WORDS = ['大腦', '工具', '思維', '挑戰', '變革', '算力', '數據', 'AI素養', '協作', '智慧', '發展', '演算法'];
+
+  function startPollSimulation() {
+    if (pollSimulationInterval) return;
+    pollSimulationInterval = setInterval(() => {
+      const chosenOpt = Math.random() < 0.6 ? 'a' : 'b';
+      const randId = 'sim_' + Math.random().toString(36).slice(2, 7);
+      localPollVotes[randId] = chosenOpt;
+      saveLocalPoll();
+      renderPollData(localPollVotes);
+    }, 8000); // 每 8 秒模擬一名學生投票
+  }
+
+  function startWcSimulation() {
+    if (wcSimulationInterval) return;
+    wcSimulationInterval = setInterval(() => {
+      const word = Math.random() < 0.35 ? 'AI' : SIM_WORDS[Math.floor(Math.random() * SIM_WORDS.length)];
+      localWords.push(word);
+      saveLocalWords();
+      renderWordCloudData(localWords);
+    }, 10000); // 每 10 秒模擬一名學生提交關鍵字
+  }
+
+  // Slide 切換事件監聽，確保進入時正確重繪與啟用模擬
   Reveal.on('slidechanged', e => {
     if (e.currentSlide?.id === 'slide-wordcloud') {
       setTimeout(drawWordCloud, 150);
+      if (isWcLocalMode) {
+        startWcSimulation();
+      }
+    } else {
+      if (wcSimulationInterval) {
+        clearInterval(wcSimulationInterval);
+        wcSimulationInterval = null;
+      }
+    }
+
+    if (e.currentSlide?.id === 'slide-poll') {
+      if (isPollLocalMode) {
+        startPollSimulation();
+      }
+    } else {
+      if (pollSimulationInterval) {
+        clearInterval(pollSimulationInterval);
+        pollSimulationInterval = null;
+      }
     }
   });
 </script>
